@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow Pro — Digital Agency Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">TaskFlow</div>
+        <div class="logo-sub">PRO AGENCY</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="today">
+        <span class="nav-icon">📋</span> Today
+      </button>
+      <button class="nav-item" data-view="analytics">
+        <span class="nav-icon">📊</span> Analytics
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="streak-card">
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-label">🔥 DAY STREAK</div>
+      </div>
+      <div class="sidebar-stat"><span>Total done</span><strong id="totalDone">0</strong></div>
+      <div class="sidebar-stat"><span>Total time</span><strong id="totalTime">0h</strong></div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- TODAY VIEW -->
+    <section class="view active" id="view-today">
+      <div class="view-header">
+        <div>
+          <h1>Today's Tasks</h1>
+          <p id="dateDisplay">—</p>
+        </div>
+        <div class="tracker-widget">
+          <span>Worked today?</span>
+          <button class="tracker-btn yes" id="trackerYes">✓ Yes</button>
+          <button class="tracker-btn no" id="trackerNo">✗ No</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Today</div>
+          <div class="stat-value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value" id="statDone">0</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" id="statPending">0</div>
+        </div>
+        <div class="stat-card cyan">
+          <div class="stat-label">Time Today</div>
+          <div class="stat-value" id="statTime">0m</div>
+        </div>
+      </div>
+
+      <form class="task-form" id="taskForm">
+        <div class="form-row">
+          <input type="text" id="clientInput" placeholder="Client name (e.g. Nike, Zara)" required maxlength="40">
+          <input type="text" id="titleInput" placeholder="What needs to be done?" required maxlength="120">
+        </div>
+        <div class="form-row">
+          <select id="priorityInput">
+            <option value="high">🔴 High Priority</option>
+            <option value="medium" selected>🟡 Medium Priority</option>
+            <option value="low">🟢 Low Priority</option>
+          </select>
+          <input type="number" id="estimateInput" placeholder="Est. hours (optional)" min="0" step="0.5" style="flex:1">
+          <button type="submit" class="btn-primary">
+            <span>＋</span> Add Task
+          </button>
+        </div>
+      </form>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="today">Today</button>
+        <button class="filter-tab" data-filter="pending">Pending</button>
+        <button class="filter-tab" data-filter="done">Completed</button>
+        <button class="filter-tab" data-filter="all">All Tasks</button>
+      </div>
+
+      <div class="task-list" id="taskList"></div>
+    </section>
+
+    <!-- ANALYTICS VIEW -->
+    <section class="view" id="view-analytics">
+      <div class="view-header">
+        <div>
+          <h1>Analytics & Insights</h1>
+          <p>Track your productivity, time & performance</p>
+        </div>
+      </div>
+
+      <div class="summary-row">
+        <div class="stat-card green">
+          <div class="stat-label">Tasks This Week</div>
+          <div class="stat-value" id="weekDone">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tasks This Month</div>
+          <div class="stat-value" id="monthDone">0</div>
+        </div>
+        <div class="stat-card cyan">
+          <div class="stat-label">Avg Time / Task</div>
+          <div class="stat-value" id="avgTime">0m</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Completion Rate</div>
+          <div class="stat-value" id="completionRate">0%</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>📈 Weekly Performance (Tasks Completed)</h3>
+          <canvas id="weeklyChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>🎯 Priority Distribution</h3>
+          <canvas id="priorityChart"></canvas>
+        </div>
+        <div class="chart-card wide">
+          <h3>📊 Monthly Trend (Last 30 Days)</h3>
+          <canvas id="monthlyChart"></canvas>
+        </div>
+        <div class="chart-card wide">
+          <h3>⏱️ Time Spent (Last 7 Days)</h3>
+          <canvas id="timeChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- NOTES MODAL -->
+<div class="modal" id="notesModal">
+  <div class="modal-content">
+    <h3 id="noteTaskTitle">Task Notes</h3>
+    <p class="modal-sub">Add detailed notes, links, or instructions for this task.</p>
+    <textarea id="noteText" placeholder="Write your notes here..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelNote">Cancel</button>
+      <button class="btn-primary" id="saveNote">Save Notes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
