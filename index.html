@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TaskFlow Pro — Digital Agency Dashboard</title>
+<title>Growth By Mnant — TaskFlow Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -13,23 +12,20 @@
 <body>
 
 <div class="app">
-  <!-- ============ SIDEBAR ============ -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="logo">
       <div class="logo-icon">⚡</div>
       <div>
-        <div class="logo-text">TaskFlow</div>
-        <div class="logo-sub">PRO AGENCY</div>
+        <div class="logo-text">Growth By Mnant</div>
+        <div class="logo-sub">DIGITAL AGENCY</div>
       </div>
     </div>
 
     <nav class="nav">
-      <button class="nav-item active" data-view="today">
-        <span class="nav-icon">📋</span> Today
-      </button>
-      <button class="nav-item" data-view="analytics">
-        <span class="nav-icon">📊</span> Analytics
-      </button>
+      <button class="nav-item active" data-view="today"><span>📋</span> Today</button>
+      <button class="nav-item" data-view="analytics"><span>📊</span> Analytics</button>
+      <button class="nav-item" data-view="clients"><span>👥</span> Clients</button>
     </nav>
 
     <div class="sidebar-footer">
@@ -39,10 +35,15 @@
       </div>
       <div class="sidebar-stat"><span>Total done</span><strong id="totalDone">0</strong></div>
       <div class="sidebar-stat"><span>Total time</span><strong id="totalTime">0h</strong></div>
+      <div class="data-actions">
+        <button class="data-btn" id="exportBtn" title="Download backup">⬇ Export</button>
+        <button class="data-btn" id="importBtn" title="Restore backup">⬆ Import</button>
+        <input type="file" id="importFile" accept="application/json" hidden>
+      </div>
     </div>
   </aside>
 
-  <!-- ============ MAIN ============ -->
+  <!-- MAIN -->
   <main class="main">
 
     <!-- TODAY VIEW -->
@@ -60,41 +61,44 @@
       </div>
 
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total Today</div>
-          <div class="stat-value" id="statTotal">0</div>
-        </div>
-        <div class="stat-card green">
-          <div class="stat-label">Completed</div>
-          <div class="stat-value" id="statDone">0</div>
-        </div>
-        <div class="stat-card amber">
-          <div class="stat-label">Pending</div>
-          <div class="stat-value" id="statPending">0</div>
-        </div>
-        <div class="stat-card cyan">
-          <div class="stat-label">Time Today</div>
-          <div class="stat-value" id="statTime">0m</div>
-        </div>
+        <div class="stat-card"><div class="stat-label">Total Today</div><div class="stat-value" id="statTotal">0</div></div>
+        <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value" id="statDone">0</div></div>
+        <div class="stat-card amber"><div class="stat-label">Pending</div><div class="stat-value" id="statPending">0</div></div>
+        <div class="stat-card cyan"><div class="stat-label">Time Today</div><div class="stat-value" id="statTime">0m</div></div>
       </div>
 
       <form class="task-form" id="taskForm">
         <div class="form-row">
-          <input type="text" id="clientInput" placeholder="Client name (e.g. Nike, Zara)" required maxlength="40">
+          <input type="text" id="clientInput" placeholder="Client name (e.g. Nike)" required maxlength="40">
           <input type="text" id="titleInput" placeholder="What needs to be done?" required maxlength="120">
         </div>
         <div class="form-row">
           <select id="priorityInput">
-            <option value="high">🔴 High Priority</option>
-            <option value="medium" selected>🟡 Medium Priority</option>
-            <option value="low">🟢 Low Priority</option>
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
           </select>
-          <input type="number" id="estimateInput" placeholder="Est. hours (optional)" min="0" step="0.5" style="flex:1">
-          <button type="submit" class="btn-primary">
-            <span>＋</span> Add Task
-          </button>
+          <input type="date" id="dueDateInput" title="Due date">
+          <input type="number" id="estimateInput" placeholder="Est. h" min="0" step="0.5">
+          <input type="text" id="tagsInput" placeholder="tags (comma sep.)" maxlength="60">
+          <button type="submit" class="btn-primary">＋ Add Task</button>
         </div>
       </form>
+
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search tasks, clients, notes...">
+        </div>
+        <select id="clientFilter"><option value="">All Clients</option></select>
+        <select id="sortSelect">
+          <option value="priority">Sort: Priority</option>
+          <option value="newest">Sort: Newest</option>
+          <option value="oldest">Sort: Oldest</option>
+          <option value="client">Sort: Client A–Z</option>
+          <option value="time">Sort: Most Time</option>
+        </select>
+      </div>
 
       <div class="filter-tabs">
         <button class="filter-tab active" data-filter="today">Today</button>
@@ -109,49 +113,62 @@
     <!-- ANALYTICS VIEW -->
     <section class="view" id="view-analytics">
       <div class="view-header">
-        <div>
-          <h1>Analytics & Insights</h1>
-          <p>Track your productivity, time & performance</p>
+        <div><h1>Analytics & Insights</h1><p>Performance, time & productivity tracking</p></div>
+      </div>
+
+      <div class="goal-card">
+        <div class="goal-left">
+          <div class="goal-label">🎯 Weekly Goal</div>
+          <div class="goal-value">
+            <span id="weekGoalDone">0</span> / <input type="number" id="weekGoalTarget" min="1" value="20">
+            <span class="goal-unit">tasks</span>
+          </div>
         </div>
+        <div class="goal-bar"><div class="goal-fill" id="weekGoalFill"></div></div>
       </div>
 
       <div class="summary-row">
-        <div class="stat-card green">
-          <div class="stat-label">Tasks This Week</div>
-          <div class="stat-value" id="weekDone">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Tasks This Month</div>
-          <div class="stat-value" id="monthDone">0</div>
-        </div>
-        <div class="stat-card cyan">
-          <div class="stat-label">Avg Time / Task</div>
-          <div class="stat-value" id="avgTime">0m</div>
-        </div>
-        <div class="stat-card amber">
-          <div class="stat-label">Completion Rate</div>
-          <div class="stat-value" id="completionRate">0%</div>
-        </div>
+        <div class="stat-card green"><div class="stat-label">Tasks This Week</div><div class="stat-value" id="weekDone">0</div></div>
+        <div class="stat-card"><div class="stat-label">Tasks This Month</div><div class="stat-value" id="monthDone">0</div></div>
+        <div class="stat-card cyan"><div class="stat-label">Avg Time / Task</div><div class="stat-value" id="avgTime">0m</div></div>
+        <div class="stat-card amber"><div class="stat-label">Completion Rate</div><div class="stat-value" id="completionRate">0%</div></div>
       </div>
 
       <div class="charts-grid">
-        <div class="chart-card">
-          <h3>📈 Weekly Performance (Tasks Completed)</h3>
-          <canvas id="weeklyChart"></canvas>
+        <div class="chart-card"><h3>📈 Weekly Performance</h3><canvas id="weeklyChart"></canvas></div>
+        <div class="chart-card"><h3>🎯 Priority Distribution</h3><canvas id="priorityChart"></canvas></div>
+        <div class="chart-card wide"><h3>📊 Monthly Trend (Last 30 Days)</h3><canvas id="monthlyChart"></canvas></div>
+        <div class="chart-card wide"><h3>⏱️ Time Spent (Last 7 Days)</h3><canvas id="timeChart"></canvas></div>
+      </div>
+
+      <div class="chart-card wide heatmap-card">
+        <h3>🔥 Productivity Heatmap (Last 12 Weeks)</h3>
+        <div class="heatmap-wrap">
+          <div class="heatmap-days">
+            <span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span>
+          </div>
+          <div class="heatmap-scroll">
+            <div class="heatmap" id="heatmap"></div>
+          </div>
         </div>
-        <div class="chart-card">
-          <h3>🎯 Priority Distribution</h3>
-          <canvas id="priorityChart"></canvas>
-        </div>
-        <div class="chart-card wide">
-          <h3>📊 Monthly Trend (Last 30 Days)</h3>
-          <canvas id="monthlyChart"></canvas>
-        </div>
-        <div class="chart-card wide">
-          <h3>⏱️ Time Spent (Last 7 Days)</h3>
-          <canvas id="timeChart"></canvas>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <div class="heatmap-cell l0"></div>
+          <div class="heatmap-cell l1"></div>
+          <div class="heatmap-cell l2"></div>
+          <div class="heatmap-cell l3"></div>
+          <div class="heatmap-cell l4"></div>
+          <span>More</span>
         </div>
       </div>
+    </section>
+
+    <!-- CLIENTS VIEW -->
+    <section class="view" id="view-clients">
+      <div class="view-header">
+        <div><h1>Client Overview</h1><p>Per-client performance breakdown</p></div>
+      </div>
+      <div class="clients-grid" id="clientsGrid"></div>
     </section>
 
   </main>
@@ -161,7 +178,7 @@
 <div class="modal" id="notesModal">
   <div class="modal-content">
     <h3 id="noteTaskTitle">Task Notes</h3>
-    <p class="modal-sub">Add detailed notes, links, or instructions for this task.</p>
+    <p class="modal-sub">Add detailed notes, links, or instructions.</p>
     <textarea id="noteText" placeholder="Write your notes here..."></textarea>
     <div class="modal-actions">
       <button class="btn-ghost" id="cancelNote">Cancel</button>
@@ -170,7 +187,22 @@
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- SUBTASKS MODAL -->
+<div class="modal" id="subtasksModal">
+  <div class="modal-content">
+    <h3>✓ Subtasks</h3>
+    <p class="modal-sub" id="subtaskTaskTitle">—</p>
+    <div class="subtask-list" id="subtaskList"></div>
+    <div class="subtask-add">
+      <input type="text" id="newSubtaskInput" placeholder="Add a subtask..." maxlength="100">
+      <button class="btn-primary" id="addSubtaskBtn">Add</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="closeSubtasks">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
