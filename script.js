@@ -1,8 +1,8 @@
 /* ============================================================
-   GROWTH BY MNANT — TASKFLOW PRO
+   GROWTH BY MANNAT — TASKFLOW PRO (LIGHT THEME)
    ============================================================ */
 
-const STORAGE_KEY = 'growth_by_mnant_taskflow_v2';
+const STORAGE_KEY = 'growth_by_mannat_taskflow_v3';
 
 let state = {
   tasks: [],
@@ -85,7 +85,7 @@ function processCarryOver() {
   });
   if (carried) {
     saveState();
-    setTimeout(() => toast(`${carried} task${carried > 1 ? 's' : ''} carried over — finish these first!`, 'info'), 400);
+    setTimeout(() => toast(`${carried} task${carried > 1 ? 's' : ''} carried over!`, 'info'), 400);
   }
 }
 
@@ -158,7 +158,6 @@ function renderTasks() {
   // Sorting
   const pOrder = { high: 0, medium: 1, low: 2 };
   tasks.sort((a, b) => {
-    // Done tasks always last
     if ((a.status === 'done') !== (b.status === 'done')) return a.status === 'done' ? 1 : -1;
     if (state.sort === 'priority') {
       if (a.carriedOver !== b.carriedOver) return b.carriedOver - a.carriedOver;
@@ -386,7 +385,7 @@ function deleteSubtask(stId) {
   saveState(); renderSubtasks();
 }
 
-/* ---------- Charts ---------- */
+/* ---------- Charts (Light Theme Fixes) ---------- */
 function getLastNDays(n) {
   const arr = [];
   for (let i = n - 1; i >= 0; i--) {
@@ -398,16 +397,16 @@ function getLastNDays(n) {
 function renderCharts() {
   Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
 
-  const gridColor = 'rgba(255,255,255,0.06)';
-  const tickColor = '#8892A6';
+  // Light theme chart colors
+  const gridColor = 'rgba(0,0,0,0.06)';
+  const tickColor = '#64748B'; 
   const font = { family: 'Inter', size: 11, weight: '600' };
   const baseOptions = {
     responsive: true, maintainAspectRatio: false,
     plugins: {
       legend: { labels: { color: tickColor, font, boxWidth: 12, padding: 12 } },
       tooltip: {
-        backgroundColor: '#1A2234', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-        titleColor: '#fff', bodyColor: '#c7cde0', padding: 12, cornerRadius: 8
+        backgroundColor: '#0F172A', titleColor: '#fff', bodyColor: '#E2E8F0', padding: 12, cornerRadius: 8
       }
     },
     scales: {
@@ -429,16 +428,9 @@ function renderCharts() {
       type: 'bar',
       data: { labels: weekLabels, datasets: [{
         data: weekData,
-        backgroundColor: (ctx) => {
-          const { ctx: cc, chartArea } = ctx.chart;
-          if (!chartArea) return '#8B5CF6';
-          const g = cc.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-          g.addColorStop(0, 'rgba(139,92,246,0.15)');
-          g.addColorStop(1, 'rgba(6,182,212,0.9)');
-          return g;
-        },
-        borderRadius: 7, borderSkipped: false,
-        hoverBackgroundColor: '#06B6D4'
+        backgroundColor: '#8B5CF6',
+        borderRadius: 6, borderSkipped: false,
+        hoverBackgroundColor: '#7C3AED'
       }]},
       options: { ...baseOptions, plugins: { ...baseOptions.plugins, legend: { display: false } } }
     });
@@ -456,8 +448,8 @@ function renderCharts() {
         labels: totalP === 0 ? ['No data'] : ['High', 'Medium', 'Low'],
         datasets: [{
           data: totalP === 0 ? [1] : [pc.high, pc.medium, pc.low],
-          backgroundColor: totalP === 0 ? ['#1A2234'] : ['#EF4444', '#F59E0B', '#10B981'],
-          borderColor: '#121826', borderWidth: 3, hoverOffset: 8
+          backgroundColor: totalP === 0 ? ['#E2E8F0'] : ['#EF4444', '#F59E0B', '#10B981'],
+          borderColor: '#FFFFFF', borderWidth: 2, hoverOffset: 8
         }]
       },
       options: {
@@ -484,16 +476,9 @@ function renderCharts() {
       data: { labels: monthLabels, datasets: [{
         data: monthData,
         borderColor: '#8B5CF6',
-        backgroundColor: (ctx) => {
-          const { ctx: cc, chartArea } = ctx.chart;
-          if (!chartArea) return 'rgba(139,92,246,0.15)';
-          const g = cc.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          g.addColorStop(0, 'rgba(139,92,246,0.35)');
-          g.addColorStop(1, 'rgba(139,92,246,0)');
-          return g;
-        },
+        backgroundColor: 'rgba(139,92,246,0.1)',
         fill: true, tension: 0.4, borderWidth: 2.5,
-        pointBackgroundColor: '#8B5CF6', pointBorderColor: '#121826', pointBorderWidth: 2,
+        pointBackgroundColor: '#8B5CF6', pointBorderColor: '#fff', pointBorderWidth: 2,
         pointRadius: 3, pointHoverRadius: 6
       }]},
       options: { ...baseOptions, plugins: { ...baseOptions.plugins, legend: { display: false } } }
@@ -513,16 +498,9 @@ function renderCharts() {
       type: 'bar',
       data: { labels: weekLabels, datasets: [{
         data: timeData,
-        backgroundColor: (ctx) => {
-          const { ctx: cc, chartArea } = ctx.chart;
-          if (!chartArea) return '#06B6D4';
-          const g = cc.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-          g.addColorStop(0, 'rgba(6,182,212,0.15)');
-          g.addColorStop(1, 'rgba(6,182,212,0.9)');
-          return g;
-        },
-        borderRadius: 7, borderSkipped: false,
-        hoverBackgroundColor: '#8B5CF6'
+        backgroundColor: '#8B5CF6',
+        borderRadius: 6, borderSkipped: false,
+        hoverBackgroundColor: '#7C3AED'
       }]},
       options: { ...baseOptions, plugins: { ...baseOptions.plugins, legend: { display: false } } }
     });
@@ -613,7 +591,7 @@ function renderClients() {
         <div class="client-stats">
           <div class="client-stat-item"><div class="num" style="color:var(--success)">${c.done}</div><div class="lbl">Done</div></div>
           <div class="client-stat-item"><div class="num" style="color:var(--warning)">${c.pending}</div><div class="lbl">Pending</div></div>
-          <div class="client-stat-item"><div class="num" style="color:var(--secondary)">${fmtDuration(c.time)}</div><div class="lbl">Time</div></div>
+          <div class="client-stat-item"><div class="num">${fmtDuration(c.time)}</div><div class="lbl">Time</div></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);font-weight:600">
           <span>Completion</span><span>${pct}%</span>
@@ -630,13 +608,13 @@ function exportData() {
     tracker: state.tracker,
     weekGoal: state.weekGoal,
     exportedAt: new Date().toISOString(),
-    agency: 'Growth By Mnant'
+    agency: 'Growth By Mannat'
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `growth-by-mnant-backup-${dateKey()}.json`;
+  a.download = `growth-by-mannat-backup-${dateKey()}.json`;
   a.click();
   URL.revokeObjectURL(url);
   toast('Backup downloaded!', 'success');
